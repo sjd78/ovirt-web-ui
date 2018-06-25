@@ -4,7 +4,7 @@ import AddVmButton from './components/VmDialog/AddVmButton'
 import PageRouter from './components/PageRouter'
 import { VmDetailToolbar, PoolDetailToolbar } from './components/Toolbar'
 import { PoolDetailsPage, VmDetailsPage, VmEditPage, VmCreatePage, VmsPage, LegacyVmDetailsPage } from './components/Pages'
-
+import { NoMatchPage } from './components/Pages/NoMatchPage'
 import { msg } from './intl'
 
 /**
@@ -67,6 +67,12 @@ export default function getRoutes (vms) {
         title: (match, vms) => vms.getIn(['pools', match.params.id, 'name']) || match.params.id,
         component: PoolDetailsPage,
         toolbars: [(match) => (<PoolDetailToolbar match={match} key='poolaction' />)],
+      },
+
+      {
+        exact: true,
+        title: 'Error', // TODO: localize
+        component: NoMatchPage,
       },
     ],
   }]
