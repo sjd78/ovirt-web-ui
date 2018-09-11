@@ -32,7 +32,8 @@ function assertLogin ({ methodName }: { methodName: string }) {
 // HTTP Listener Handling
 //
 type MethodType = 'GET' | 'POST' | 'PUT' | 'DELETE'
-type ListenerType = (requestId: Object, eventType: 'START' | 'STOP') => void
+type ActiveRequestRequestType = { method: MethodType, url: string }
+type ListenerType = (requestId: ActiveRequestRequestType, eventType: 'START' | 'STOP') => void
 
 const listeners: Set<ListenerType> = new Set()
 
@@ -158,14 +159,15 @@ function httpDelete ({ url, custHeaders = { 'Accept': 'application/json' } }: De
 // Exports
 //
 export type {
-  MethodType,
+  ActiveRequestRequestType,
   ListenerType,
+  MethodType,
 }
 export {
   addHttpListener,
   assertLogin,
+  httpDelete,
   httpGet,
   httpPost,
   httpPut,
-  httpDelete,
 }

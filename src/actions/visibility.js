@@ -1,9 +1,12 @@
+// @flow
+import type { ActionType } from './index'
+
 import {
   SELECT_POOL_DETAIL,
   SELECT_VM_DETAIL,
 } from '../constants'
 
-export function selectVmDetail ({ vmId }) {
+export function selectVmDetail ({ vmId }: { vmId: string }): ActionType {
   return {
     type: SELECT_VM_DETAIL,
     payload: {
@@ -12,7 +15,7 @@ export function selectVmDetail ({ vmId }) {
   }
 }
 
-export function selectPoolDetail ({ poolId }) {
+export function selectPoolDetail ({ poolId }: { poolId: string }): ActionType {
   return {
     type: SELECT_POOL_DETAIL,
     payload: {

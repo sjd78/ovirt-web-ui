@@ -1,3 +1,7 @@
+// @flow
+import type { ActionType } from './index'
+import type { IconType, DiskType, VmConsolesType, VmSessionsType, SnapshotType, CdRomType, NicType, VmType } from '../ovirtapi/types'
+
 import {
   ADD_VM_NIC,
   CHANGE_VM_CDROM,
@@ -35,7 +39,7 @@ import {
   VM_ACTION_IN_PROGRESS,
 } from '../constants'
 
-export function login ({ username, password, token, userId }) {
+export function login ({ username, password, token, userId }: { username: string, password?: string, token: string, userId: string }): ActionType {
   return {
     type: LOGIN,
     payload: {
@@ -49,7 +53,7 @@ export function login ({ username, password, token, userId }) {
   }
 }
 
-export function setDomain ({ domain }) {
+export function setDomain ({ domain }: { domain: string }): ActionType {
   return {
     type: SET_DOMAIN,
     payload: {
@@ -61,7 +65,7 @@ export function setDomain ({ domain }) {
 /**
  * I.e. the Refresh button is clicked or scheduler event occurred (polling)
  */
-export function refresh ({ page, quiet = false, shallowFetch = false }) {
+export function refresh ({ page, quiet = false, shallowFetch = false }: { page: number, quiet: boolean, shallowFetch: boolean}): ActionType {
   return {
     type: REFRESH_DATA,
     payload: {
@@ -72,7 +76,7 @@ export function refresh ({ page, quiet = false, shallowFetch = false }) {
   }
 }
 
-export function getVmsByPage ({ page, shallowFetch = true }) {
+export function getVmsByPage ({ page, shallowFetch = true }: { page: number, shallowFetch: boolean }): ActionType {
   return {
     type: GET_VMS_BY_PAGE,
     payload: {
@@ -82,7 +86,7 @@ export function getVmsByPage ({ page, shallowFetch = true }) {
   }
 }
 
-export function getVmsByCount ({ count, shallowFetch = true }) {
+export function getVmsByCount ({ count, shallowFetch = true }: { count: number, shallowFetch: boolean }): ActionType {
   return {
     type: GET_VMS_BY_COUNT,
     payload: {
@@ -92,7 +96,7 @@ export function getVmsByCount ({ count, shallowFetch = true }) {
   }
 }
 
-export function shutdownVm ({ vmId, force = false }) {
+export function shutdownVm ({ vmId, force = false }: { vmId: string, force: boolean }): ActionType {
   return {
     type: SHUTDOWN_VM,
     payload: {
@@ -102,7 +106,7 @@ export function shutdownVm ({ vmId, force = false }) {
   }
 }
 
-export function restartVm ({ vmId, force = false }) {
+export function restartVm ({ vmId, force = false }: { vmId: string, force: boolean }): ActionType {
   return {
     type: RESTART_VM,
     payload: {
@@ -112,7 +116,7 @@ export function restartVm ({ vmId, force = false }) {
   }
 }
 
-export function startVm ({ vmId }) {
+export function startVm ({ vmId }: { vmId: string }): ActionType {
   return {
     type: START_VM,
     payload: {
@@ -121,7 +125,7 @@ export function startVm ({ vmId }) {
   }
 }
 
-export function downloadConsole ({ vmId, consoleId, usbFilter }) {
+export function downloadConsole ({ vmId, consoleId, usbFilter }: { vmId: string, consoleId: string, usbFilter: string }): ActionType {
   return {
     type: DOWNLOAD_CONSOLE_VM,
     payload: {
@@ -132,7 +136,7 @@ export function downloadConsole ({ vmId, consoleId, usbFilter }) {
   }
 }
 
-export function suspendVm ({ vmId }) {
+export function suspendVm ({ vmId }: { vmId: string }): ActionType {
   return {
     type: SUSPEND_VM,
     payload: {
@@ -141,7 +145,10 @@ export function suspendVm ({ vmId }) {
   }
 }
 
-export function createVm ({ vm, transformInput = false, pushToDetailsOnSuccess = false }, { correlationId, ...additionalMeta }) {
+export function createVm (
+  { vm, transformInput = false, pushToDetailsOnSuccess = false }: { vm: VmType, transformInput?: boolean, pushToDetailsOnSuccess?: boolean },
+  { correlationId, ...additionalMeta }: { correlationId: string }
+): ActionType {
   return {
     type: CREATE_VM,
     payload: {
@@ -156,7 +163,10 @@ export function createVm ({ vm, transformInput = false, pushToDetailsOnSuccess =
   }
 }
 
-export function editVm ({ vm, transformInput = false }, { correlationId, ...additionalMeta }) {
+export function editVm (
+  { vm, transformInput = false }: { vm: VmType, transformInput?: boolean },
+  { correlationId, ...additionalMeta }: { correlationId: string }
+): ActionType {
   return {
     type: EDIT_VM,
     payload: {
@@ -170,7 +180,7 @@ export function editVm ({ vm, transformInput = false }, { correlationId, ...addi
   }
 }
 
-export function removeVm ({ vmId, force = false, preserveDisks = false }) {
+export function removeVm ({ vmId, force = false, preserveDisks = false }: { vmId: string, force?: boolean, preserveDisks?: boolean }): ActionType {
   return {
     type: REMOVE_VM,
     payload: {
@@ -181,7 +191,7 @@ export function removeVm ({ vmId, force = false, preserveDisks = false }) {
   }
 }
 
-export function setVmActionResult ({ vmId, correlationId, result }) {
+export function setVmActionResult ({ vmId, correlationId, result }: { vmId: string, correlationId: string, result: boolean }): ActionType {
   return {
     type: SET_VM_ACTION_RESULT,
     payload: {
@@ -193,7 +203,7 @@ export function setVmActionResult ({ vmId, correlationId, result }) {
 }
 
 // --- Internal State -------------------------
-export function loginSuccessful ({ token, username, userId }) {
+export function loginSuccessful ({ token, username, userId }: { token: string, username: string, userId: string }): ActionType {
   return {
     type: LOGIN_SUCCESSFUL,
     payload: {
@@ -204,7 +214,7 @@ export function loginSuccessful ({ token, username, userId }) {
   }
 }
 
-export function setOvirtApiVersion (oVirtApiVersion) {
+export function setOvirtApiVersion (oVirtApiVersion: Object): ActionType { // TODO: oVirtApiVersion
   return {
     type: SET_OVIRT_API_VERSION,
     payload: {
@@ -213,7 +223,7 @@ export function setOvirtApiVersion (oVirtApiVersion) {
   }
 }
 
-export function logout () {
+export function logout (): ActionType {
   return {
     type: LOGOUT,
     payload: {
@@ -223,10 +233,8 @@ export function logout () {
 
 /**
  * Update or Add
- * @param vms - array of vms
- * @returns {{type: string, payload: {vms: *}}}
  */
-export function updateVms ({ vms, copySubResources = false, page = null }) {
+export function updateVms ({ vms, copySubResources = false, page }: { vms: Object, copySubResources: boolean, page?: number }): ActionType {
   return {
     type: UPDATE_VMS,
     payload: {
@@ -239,11 +247,8 @@ export function updateVms ({ vms, copySubResources = false, page = null }) {
 
 /**
  * Remove VMs from store.
- *
- * @param vmIds array
- * @returns {{type: string, payload: {vmIds: *}}}
  */
-export function removeVms ({ vmIds }) {
+export function removeVms ({ vmIds }: { vmIds: Array<string> }): ActionType {
   return {
     type: REMOVE_VMS,
     payload: {
@@ -254,10 +259,8 @@ export function removeVms ({ vmIds }) {
 
 /**
  * Remove all VMs from store which ID is not listed among vmIdsToPreserve
- * @param vmIdsToPreserve
- * @returns {{type: string, payload: {vmIds: *}}}
  */
-export function removeMissingVms ({ vmIdsToPreserve }) {
+export function removeMissingVms ({ vmIdsToPreserve }: { vmIdsToPreserve: Array<string> }): ActionType {
   return {
     type: REMOVE_MISSING_VMS,
     payload: {
@@ -266,7 +269,7 @@ export function removeMissingVms ({ vmIdsToPreserve }) {
   }
 }
 
-export function updateIcons ({ icons }) {
+export function updateIcons ({ icons }: { icons: Array<IconType> }): ActionType {
   return {
     type: UPDATE_ICONS,
     payload: {
@@ -275,7 +278,7 @@ export function updateIcons ({ icons }) {
   }
 }
 
-export function setVmDisks ({ vmId, disks }) {
+export function setVmDisks ({ vmId, disks }: { vmId: string, disks: Array<DiskType> }): ActionType {
   return {
     type: SET_VM_DISKS,
     payload: {
@@ -285,7 +288,7 @@ export function setVmDisks ({ vmId, disks }) {
   }
 }
 
-export function vmActionInProgress ({ vmId, name, started }) {
+export function vmActionInProgress ({ vmId, name, started }: { vmId: string, name: string, started: boolean }): ActionType {
   return {
     type: VM_ACTION_IN_PROGRESS,
     payload: {
@@ -296,7 +299,7 @@ export function vmActionInProgress ({ vmId, name, started }) {
   }
 }
 
-export function setVmConsoles ({ vmId, consoles }) {
+export function setVmConsoles ({ vmId, consoles }: { vmId: string, consoles: Array<VmConsolesType> }): ActionType {
   return {
     type: SET_VM_CONSOLES,
     payload: {
@@ -306,7 +309,7 @@ export function setVmConsoles ({ vmId, consoles }) {
   }
 }
 
-export function setVmSessions ({ vmId, sessions }) {
+export function setVmSessions ({ vmId, sessions }: { vmId: string, sessions: VmSessionsType }): ActionType {
   return {
     type: SET_VM_SESSIONS,
     payload: {
@@ -316,7 +319,7 @@ export function setVmSessions ({ vmId, sessions }) {
   }
 }
 
-export function setVmSnapshots ({ vmId, snapshots }) {
+export function setVmSnapshots ({ vmId, snapshots }: { vmId: string, snapshots: Array<SnapshotType> }): ActionType {
   return {
     type: SET_VM_SNAPSHOTS,
     payload: {
@@ -326,7 +329,7 @@ export function setVmSnapshots ({ vmId, snapshots }) {
   }
 }
 
-export function getRDP ({ vmName, username, domain, fqdn }) {
+export function getRDP ({ vmName, username, domain, fqdn }: { vmName: string, username: string, domain: string, fqdn: string }): ActionType {
   return {
     type: GET_RDP_VM,
     payload: {
@@ -338,7 +341,7 @@ export function getRDP ({ vmName, username, domain, fqdn }) {
   }
 }
 
-export function setChanged ({ value }) {
+export function setChanged ({ value }: { value: boolean }): ActionType {
   return {
     type: SET_CHANGED,
     payload: {
@@ -347,7 +350,7 @@ export function setChanged ({ value }) {
   }
 }
 
-export function setVmCdRom ({ cdrom, vmId }) {
+export function setVmCDRom ({ vmId, cdrom }: { vmId: string, cdrom: CdRomType }): ActionType {
   return {
     type: SET_VM_CDROM,
     payload: {
@@ -357,7 +360,7 @@ export function setVmCdRom ({ cdrom, vmId }) {
   }
 }
 
-export function getVmCdRom ({ vmId, current = true }) {
+export function getVmCdRom ({ vmId, current = true }: { vmId: string, current: boolean }): ActionType {
   return {
     type: GET_VM_CDROM,
     payload: {
@@ -367,8 +370,11 @@ export function getVmCdRom ({ vmId, current = true }) {
   }
 }
 
-export function changeVmCdRom ({ cdrom, vmId, updateRedux = true, current = true }, { correlationId, ...additionalMeta } = {}) {
-  const action = {
+export function changeVmCdRom (
+  { vmId, cdrom, updateRedux = true, current = true }: { vmId: string, cdrom: CdRomType, updateRedux: boolean, current: boolean },
+  { correlationId, ...additionalMeta }: { correlationId: string } = {}
+): ActionType {
+  const action: ActionType = {
     type: CHANGE_VM_CDROM,
     payload: {
       cdrom,
@@ -388,7 +394,7 @@ export function changeVmCdRom ({ cdrom, vmId, updateRedux = true, current = true
   return action
 }
 
-export function setVmNics ({ vmId, nics }) {
+export function setVmNics ({ vmId, nics }: { vmId: string, nics: Array<NicType> }): ActionType {
   return {
     type: SET_VM_NICS,
     payload: {
@@ -398,7 +404,7 @@ export function setVmNics ({ vmId, nics }) {
   }
 }
 
-export function addVmNic ({ vmId, nic }) {
+export function addVmNic ({ vmId, nic }: { vmId: string, nic: NicType }): ActionType {
   return {
     type: ADD_VM_NIC,
     payload: {
@@ -408,7 +414,7 @@ export function addVmNic ({ vmId, nic }) {
   }
 }
 
-export function deleteVmNic ({ vmId, nicId }) {
+export function deleteVmNic ({ vmId, nicId }: { vmId: string, nicId: string }): ActionType {
   return {
     type: DELETE_VM_NIC,
     payload: {

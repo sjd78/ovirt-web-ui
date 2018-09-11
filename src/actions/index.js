@@ -1,3 +1,4 @@
+// @flow
 import AppConfiguration from '../config'
 import {
   CHECK_TOKEN_EXPIRED,
@@ -31,21 +32,27 @@ export * from './activeRequests'
 export * from './console'
 export * from './userMessages'
 
-export function startSchedulerFixedDelay (delayInSeconds = AppConfiguration.schedulerFixedDelayInSeconds) {
+export type ActionType = {
+  type: string,
+  payload?: Object | Array<Object>,
+  meta?: Object
+}
+
+export function startSchedulerFixedDelay (delayInSeconds?: number = AppConfiguration.schedulerFixedDelayInSeconds): ActionType {
   return {
     type: START_SCHEDULER_FIXED_DELAY,
     payload: { delayInSeconds },
   }
 }
 
-export function stopSchedulerFixedDelay () {
+export function stopSchedulerFixedDelay (): ActionType {
   return {
     type: STOP_SCHEDULER_FIXED_DELAY,
     payload: {},
   }
 }
 
-export function persistState () {
+export function persistState (): ActionType {
   return {
     type: PERSIST_STATE,
     payload: {},
@@ -55,7 +62,7 @@ export function persistState () {
 /**
  * Not creator of an action. Returned object can't be dispatched to the store.
  */
-export function getSingleVm ({ vmId, shallowFetch = false }) {
+export function getSingleVm ({ vmId, shallowFetch = false }: { vmId: string, shallowFetch?: boolean }): ActionType {
   return {
     type: GET_VM,
     payload: {
@@ -65,7 +72,7 @@ export function getSingleVm ({ vmId, shallowFetch = false }) {
   }
 }
 
-export function setUserFilterPermission (filter) {
+export function setUserFilterPermission (filter: string): ActionType {
   return {
     type: SET_USER_FILTER_PERMISSION,
     payload: {
@@ -74,7 +81,7 @@ export function setUserFilterPermission (filter) {
   }
 }
 
-export function setAdministrator (administrator) {
+export function setAdministrator (administrator: boolean): ActionType {
   return {
     type: SET_ADMINISTRATOR,
     payload: {
@@ -83,21 +90,21 @@ export function setAdministrator (administrator) {
   }
 }
 
-export function checkTokenExpired () {
+export function checkTokenExpired (): ActionType {
   return {
     type: CHECK_TOKEN_EXPIRED,
     payload: {},
   }
 }
 
-export function showTokenExpiredMessage () {
+export function showTokenExpiredMessage (): ActionType {
   return {
     type: SHOW_TOKEN_EXPIRED_MSG,
     payload: {},
   }
 }
 
-export function getByPage ({ page, shallowFetch = true }) {
+export function getByPage ({ page, shallowFetch = true }: { page: number, shallowFetch?: boolean }): ActionType {
   return {
     type: GET_BY_PAGE,
     payload: {
@@ -107,7 +114,7 @@ export function getByPage ({ page, shallowFetch = true }) {
   }
 }
 
-export function setUSBFilter ({ usbFilter }) {
+export function setUSBFilter ({ usbFilter }: { usbFilter: string }): ActionType {
   return {
     type: SET_USB_FILTER,
     payload: {
@@ -116,7 +123,7 @@ export function setUSBFilter ({ usbFilter }) {
   }
 }
 
-export function getUSBFilter () {
+export function getUSBFilter (): ActionType {
   return {
     type: GET_USB_FILTER,
     payload: {},
@@ -128,7 +135,7 @@ export function getUSBFilter () {
  * @param {OptionVersionType} version option version
  * @param {string=} defaultValue
  */
-export function getOption (optionName, version, defaultValue) {
+export function getOption (optionName: string, version: string, defaultValue: string): ActionType {
   return {
     type: GET_OPTION,
     payload: {

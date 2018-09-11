@@ -1,5 +1,5 @@
 // @flow
-/* eslint-disable flowtype/require-return-type */
+import type { ActionType } from './index'
 
 import {
   ADD_DISK_REMOVAL_PENDING_TASK,
@@ -10,7 +10,7 @@ import {
 
 import { PendingTaskTypes } from '../reducers/pendingTasks'
 
-export function addDiskRemovalPendingTask (diskId: string) {
+export function addDiskRemovalPendingTask (diskId: string): ActionType {
   return {
     type: ADD_DISK_REMOVAL_PENDING_TASK,
     payload: {
@@ -21,14 +21,14 @@ export function addDiskRemovalPendingTask (diskId: string) {
   }
 }
 
-export function removeDiskRemovalPendingTask (diskId: string) {
+export function removeDiskRemovalPendingTask (diskId: string): ActionType {
   return {
     type: REMOVE_DISK_REMOVAL_PENDING_TASK,
     payload: { diskId },
   }
 }
 
-export function addSnapshotRemovalPendingTask (snapshotId: string) {
+export function addSnapshotRemovalPendingTask (snapshotId: string): ActionType {
   return {
     type: ADD_SNAPSHOT_REMOVAL_PENDING_TASK,
     payload: {
@@ -39,7 +39,7 @@ export function addSnapshotRemovalPendingTask (snapshotId: string) {
   }
 }
 
-export function removeSnapshotRemovalPendingTask (snapshotId: string) {
+export function removeSnapshotRemovalPendingTask (snapshotId: string): ActionType {
   return {
     type: REMOVE_SNAPSHOT_REMOVAL_PENDING_TASK,
     payload: { snapshotId },

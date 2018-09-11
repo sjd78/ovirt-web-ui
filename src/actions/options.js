@@ -1,3 +1,4 @@
+// TODO: Add flow-types
 import {
   GET_CONSOLE_OPTIONS,
   SAVE_CONSOLE_OPTIONS,
