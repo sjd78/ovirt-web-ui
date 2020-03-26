@@ -264,6 +264,7 @@ export function* fetchPools (action) {
     internalPools.forEach(pool => fetchedPoolIds.push(pool.id))
 
     yield put(updatePools({ pools: internalPools }))
+    yield fetchUnknownIcons({ pools: internalPools })
     yield put(updateVmsPoolsCount())
   }
 
@@ -278,6 +279,7 @@ export function* fetchSinglePool (action) {
   if (pool && pool.id) {
     internalPool = Api.poolToInternal({ pool })
     yield put(updatePools({ pools: [internalPool] }))
+    yield fetchUnknownIcons({ pools: [internalPool] })
   } else {
     if (pool && pool.error && pool.error.status === 404) {
       yield put(removePools({ poolIds: [poolId] }))

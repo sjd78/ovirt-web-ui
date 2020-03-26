@@ -25,10 +25,11 @@ function* pushIconsToLocalStorage () {
   saveToLocalStorage('icons', iconsString)
 }
 
-export function* fetchUnknownIcons ({ vms = [], os = [] }) {
-  // unique iconIds from all VMs or OS
+export function* fetchUnknownIcons ({ vms = [], pools = [], os = [] }) {
+  // unique iconIds from all VMs, Pools or OS (assume internal transform JS Object, not ImmutableJS from redux)
   const iconsIds = new Set()
   vms.forEach(vm => iconsIds.add(vm.icons.large.id))
+  pools.forEach(pool => iconsIds.add(pool.vm.icons.large.id))
   os.forEach(os => iconsIds.add(os.icons.large.id))
 
   // reduce to just unknown
