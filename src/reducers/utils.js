@@ -1,5 +1,4 @@
 import { Map } from 'immutable'
-import { UPDATE_ICONS, REMOVE_ACTIVE_REQUEST, DELAYED_REMOVE_ACTIVE_REQUEST, ADD_ACTIVE_REQUEST } from '_/constants'
 
 /**
  * Takes initial state of the reducer and a map of action handlers and returns a redux-compatible reducer.
@@ -34,20 +33,7 @@ import { UPDATE_ICONS, REMOVE_ACTIVE_REQUEST, DELAYED_REMOVE_ACTIVE_REQUEST, ADD
  * @param handlers a map of handler functions where name of each action corresponds to a given action `type`
  * @returns {Function} a redux-compatible reducer
  */
-export const actionReducer = (initialState, handlers, verbose) => (state = initialState, action) => {
-  if (verbose) {
-    let actionJson = JSON.stringify(action)
-    if (actionJson.length > 250) {
-      if (action.type === UPDATE_ICONS) {
-        actionJson = actionJson.substring(0, 50) + ' ... [truncated] ...'
-      }
-    }
-
-    if (![ ADD_ACTIVE_REQUEST, REMOVE_ACTIVE_REQUEST, DELAYED_REMOVE_ACTIVE_REQUEST ].includes(action.type)) {
-      console.log('Reducing action:', actionJson)
-    }
-  }
-
+export const actionReducer = (initialState, handlers) => (state = initialState, action) => {
   if (action.type in handlers) {
     return handlers[action.type](state, action)
   }
