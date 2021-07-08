@@ -1,10 +1,8 @@
-import {
-  SET_CLUSTERS,
-} from '_/constants'
+import * as C from '_/constants'
 
 export function setClusters (clusters) {
   return {
-    type: SET_CLUSTERS,
+    type: C.SET_CLUSTERS,
     payload: clusters,
   }
 }

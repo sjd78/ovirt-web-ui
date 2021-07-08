@@ -2,7 +2,6 @@ import { put, call, all } from 'redux-saga/effects'
 
 import Api, { Transforms } from '_/ovirtapi'
 import {
-  getEngineOption,
   setCpuTopologyOptions,
   setDefaultTimezone,
   setSpiceUsbAutoShare,
@@ -76,7 +75,7 @@ export function* fetchEngineOption (name, defaultValue) {
   const option = yield callExternalAction(
     'getEngineOption',
     Api.getEngineOption,
-    getEngineOption(name),
+    { payload: { optionName: name } },
     true
   )
 

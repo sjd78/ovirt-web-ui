@@ -1,68 +1,24 @@
 import AppConfiguration from '_/config'
-import {
-  ADD_VM_NIC,
-  CHANGE_VM_CDROM,
-  COMPOSE_CREATE_VM,
-  CREATE_VM,
-  DELETE_VM_NIC,
-  EDIT_VM_NIC,
-  EDIT_VM,
-  GET_RDP_VM,
-  GET_VM,
-  GET_VM_CDROM,
-  GET_VMS,
-  LOGIN_SUCCESSFUL,
-  LOGIN,
-  LOGOUT,
-  NAVIGATE_TO_VM_DETAILS,
-  REMOVE_MISSING_VMS,
-  REMOVE_VM,
-  REMOVE_VMS,
-  RESTART_VM,
-  SAVE_FILTERS,
-  SET_CHANGED,
-  SET_FILTERS,
-  SET_OVIRT_API_VERSION,
-  SET_VM_ACTION_RESULT,
-  SET_VM_DISKS,
-  SET_VM_NICS,
-  SET_VM_SESSIONS,
-  SET_VM_SNAPSHOTS,
-  SET_VM_SORT,
-  SHUTDOWN_VM,
-  START_VM,
-  SUSPEND_VM,
-  UPDATE_ICONS,
-  UPDATE_VM_DISK,
-  UPDATE_VM_SNAPSHOT,
-  UPDATE_VMS,
-  VM_ACTION_IN_PROGRESS,
-} from '_/constants'
+import * as C from '_/constants'
 
-export function login ({ username, domain, token, userId }) {
-  return {
-    type: LOGIN,
-    payload: {
-      username,
-      domain,
-      token,
-      userId,
-    },
-  }
-}
-
+//
+// Navigate to VM details
+//
 export function navigateToVmDetails (vmId) {
   return {
-    type: NAVIGATE_TO_VM_DETAILS,
+    type: C.NAVIGATE_TO_VM_DETAILS,
     payload: {
       vmId,
     },
   }
 }
 
+//
+// Fetch a VM or Sets-Of-VMs
+//
 export function getSingleVm ({ vmId, shallowFetch = false }) {
   return {
-    type: GET_VM,
+    type: C.GET_VM,
     payload: {
       vmId,
       shallowFetch,
@@ -72,7 +28,7 @@ export function getSingleVm ({ vmId, shallowFetch = false }) {
 
 export function getVmsByPage ({ page, shallowFetch = true }) {
   return {
-    type: GET_VMS,
+    type: C.GET_VMS,
     payload: {
       shallowFetch,
       page,
@@ -83,7 +39,7 @@ export function getVmsByPage ({ page, shallowFetch = true }) {
 
 export function getVmsByCount ({ count, shallowFetch = true }) {
   return {
-    type: GET_VMS,
+    type: C.GET_VMS,
     payload: {
       shallowFetch,
       page: 1,
@@ -92,47 +48,28 @@ export function getVmsByCount ({ count, shallowFetch = true }) {
   }
 }
 
-export function shutdownVm ({ vmId, force = false }) {
+export function getByPage () {
+  return { type: C.GET_BY_PAGE }
+}
+
+export function updatePagingData ({ vmsPage, vmsExpectMorePages, poolsPage, poolsExpectMorePages }) {
   return {
-    type: SHUTDOWN_VM,
+    type: C.UPDATE_PAGING_DATA,
     payload: {
-      vmId,
-      force,
+      vmsPage,
+      vmsExpectMorePages,
+      poolsPage,
+      poolsExpectMorePages,
     },
   }
 }
 
-export function restartVm ({ vmId, force = false }) {
-  return {
-    type: RESTART_VM,
-    payload: {
-      vmId,
-      force,
-    },
-  }
-}
-
-export function startVm ({ vmId }) {
-  return {
-    type: START_VM,
-    payload: {
-      vmId,
-    },
-  }
-}
-
-export function suspendVm ({ vmId }) {
-  return {
-    type: SUSPEND_VM,
-    payload: {
-      vmId,
-    },
-  }
-}
-
+//
+// VM Actions
+//
 export function composeAndCreateVm ({ basic, nics, disks }, { correlationId, ...additionalMeta }) {
   return {
-    type: COMPOSE_CREATE_VM,
+    type: C.COMPOSE_CREATE_VM,
     payload: {
       basic,
       nics,
@@ -150,7 +87,7 @@ export function createVm (
   { correlationId, ...additionalMeta }
 ) {
   return {
-    type: CREATE_VM,
+    type: C.CREATE_VM,
     payload: {
       vm,
       cdrom,
@@ -171,7 +108,7 @@ export function editVm (
   { correlationId, ...additionalMeta }
 ) {
   return {
-    type: EDIT_VM,
+    type: C.EDIT_VM,
     payload: {
       vm,
       transformInput,
@@ -186,9 +123,47 @@ export function editVm (
   }
 }
 
+export function shutdownVm ({ vmId, force = false }) {
+  return {
+    type: C.SHUTDOWN_VM,
+    payload: {
+      vmId,
+      force,
+    },
+  }
+}
+
+export function restartVm ({ vmId, force = false }) {
+  return {
+    type: C.RESTART_VM,
+    payload: {
+      vmId,
+      force,
+    },
+  }
+}
+
+export function startVm ({ vmId }) {
+  return {
+    type: C.START_VM,
+    payload: {
+      vmId,
+    },
+  }
+}
+
+export function suspendVm ({ vmId }) {
+  return {
+    type: C.SUSPEND_VM,
+    payload: {
+      vmId,
+    },
+  }
+}
+
 export function removeVm ({ vmId, preserveDisks = false }) {
   return {
-    type: REMOVE_VM,
+    type: C.REMOVE_VM,
     payload: {
       vmId,
       preserveDisks,
@@ -198,7 +173,7 @@ export function removeVm ({ vmId, preserveDisks = false }) {
 
 export function setVmActionResult ({ vmId, correlationId, result }) {
   return {
-    type: SET_VM_ACTION_RESULT,
+    type: C.SET_VM_ACTION_RESULT,
     payload: {
       vmId,
       correlationId,
@@ -207,168 +182,12 @@ export function setVmActionResult ({ vmId, correlationId, result }) {
   }
 }
 
-// --- Internal State -------------------------
-export function loginSuccessful ({ username, domain, token, userId }) {
-  return {
-    type: LOGIN_SUCCESSFUL,
-    payload: {
-      username,
-      domain,
-      token,
-      userId,
-    },
-  }
-}
-
-export function setOvirtApiVersion (oVirtApiVersion) {
-  return {
-    type: SET_OVIRT_API_VERSION,
-    payload: {
-      oVirtApiVersion,
-    },
-  }
-}
-
-export function logout (isManual = false) {
-  return {
-    type: LOGOUT,
-    payload: {
-      isManual,
-    },
-  }
-}
-
-/**
- * Update or Add
- */
-export function updateVms ({ vms, copySubResources = false }) {
-  return {
-    type: UPDATE_VMS,
-    payload: {
-      vms,
-      copySubResources,
-    },
-  }
-}
-
-/**
- * Remove VMs from store.
- */
-export function removeVms ({ vmIds }) {
-  return {
-    type: REMOVE_VMS,
-    payload: {
-      vmIds,
-    },
-  }
-}
-
-/**
- * Remove all VMs from store which ID is not listed among vmIdsToPreserve
- */
-export function removeMissingVms ({ vmIdsToPreserve }) {
-  return {
-    type: REMOVE_MISSING_VMS,
-    payload: {
-      vmIdsToPreserve,
-    },
-  }
-}
-
-export function updateIcons ({ icons }) {
-  return {
-    type: UPDATE_ICONS,
-    payload: {
-      icons,
-    },
-  }
-}
-
-export function setVmDisks ({ vmId, disks }) {
-  return {
-    type: SET_VM_DISKS,
-    payload: {
-      vmId,
-      disks,
-    },
-  }
-}
-
-export function updateVmDisk ({ vmId, disk }) {
-  return {
-    type: UPDATE_VM_DISK,
-    payload: {
-      vmId,
-      disk,
-    },
-  }
-}
-
-export function vmActionInProgress ({ vmId, name, started }) {
-  return {
-    type: VM_ACTION_IN_PROGRESS,
-    payload: {
-      vmId,
-      name,
-      started,
-    },
-  }
-}
-
-export function setVmSessions ({ vmId, sessions }) {
-  return {
-    type: SET_VM_SESSIONS,
-    payload: {
-      vmId,
-      sessions,
-    },
-  }
-}
-
-export function setVmSnapshots ({ vmId, snapshots }) {
-  return {
-    type: SET_VM_SNAPSHOTS,
-    payload: {
-      vmId,
-      snapshots,
-    },
-  }
-}
-
-export function getRDP ({ vmName, username, domain, fqdn }) {
-  return {
-    type: GET_RDP_VM,
-    payload: {
-      vmName,
-      username,
-      domain,
-      fqdn,
-    },
-  }
-}
-
-export function setChanged ({ value }) {
-  return {
-    type: SET_CHANGED,
-    payload: {
-      value,
-    },
-  }
-}
-
-export function getVmCdRom ({ vmId, current = true }) {
-  return {
-    type: GET_VM_CDROM,
-    payload: {
-      vmId,
-      current,
-    },
-  }
-}
-
+//
+// VM CD Rom
+//
 export function changeVmCdRom ({ cdrom, vmId, current = true }, { correlationId, ...additionalMeta } = {}) {
   const action = {
-    type: CHANGE_VM_CDROM,
+    type: C.CHANGE_VM_CDROM,
     payload: {
       cdrom,
       vmId,
@@ -386,9 +205,117 @@ export function changeVmCdRom ({ cdrom, vmId, current = true }, { correlationId,
   return action
 }
 
+//
+// VM store update actions
+//
+/**
+ * Update or Add
+ */
+export function updateVms ({ vms, copySubResources = false }) {
+  return {
+    type: C.UPDATE_VMS,
+    payload: {
+      vms,
+      copySubResources,
+    },
+  }
+}
+
+/**
+ * Remove VMs from store.
+ */
+export function removeVms ({ vmIds }) {
+  return {
+    type: C.REMOVE_VMS,
+    payload: {
+      vmIds,
+    },
+  }
+}
+
+/**
+ * Remove all VMs from store which ID is not listed among vmIdsToPreserve
+ */
+export function removeMissingVms ({ vmIdsToPreserve }) {
+  return {
+    type: C.REMOVE_MISSING_VMS,
+    payload: {
+      vmIdsToPreserve,
+    },
+  }
+}
+
+export function updateIcons ({ icons }) {
+  return {
+    type: C.UPDATE_ICONS,
+    payload: {
+      icons,
+    },
+  }
+}
+
+export function setVmDisks ({ vmId, disks }) {
+  return {
+    type: C.SET_VM_DISKS,
+    payload: {
+      vmId,
+      disks,
+    },
+  }
+}
+
+export function updateVmDisk ({ vmId, disk }) {
+  return {
+    type: C.UPDATE_VM_DISK,
+    payload: {
+      vmId,
+      disk,
+    },
+  }
+}
+
+export function vmActionInProgress ({ vmId, name, started }) {
+  return {
+    type: C.VM_ACTION_IN_PROGRESS,
+    payload: {
+      vmId,
+      name,
+      started,
+    },
+  }
+}
+
+//
+// VM sessions and consoles
+//
+export function setVmSessions ({ vmId, sessions }) {
+  return {
+    type: C.SET_VM_SESSIONS,
+    payload: {
+      vmId,
+      sessions,
+    },
+  }
+}
+
+export function getRDP ({ vmName, username, domain, fqdn }) {
+  return {
+    type: C.GET_RDP_VM,
+    payload: {
+      vmName,
+      username,
+      domain,
+      fqdn,
+    },
+  }
+}
+
+//
+// VM Nics
+//
 export function setVmNics ({ vmId, nics }) {
   return {
-    type: SET_VM_NICS,
+    type: C.SET_VM_NICS,
     payload: {
       vmId,
       nics,
@@ -398,7 +325,7 @@ export function setVmNics ({ vmId, nics }) {
 
 export function addVmNic ({ vmId, nic }) {
   return {
-    type: ADD_VM_NIC,
+    type: C.ADD_VM_NIC,
     payload: {
       vmId,
       nic,
@@ -408,7 +335,7 @@ export function addVmNic ({ vmId, nic }) {
 
 export function deleteVmNic ({ vmId, nicId }) {
   return {
-    type: DELETE_VM_NIC,
+    type: C.DELETE_VM_NIC,
     payload: {
       vmId,
       nicId,
@@ -418,7 +345,7 @@ export function deleteVmNic ({ vmId, nicId }) {
 
 export function editVmNic ({ vmId, nic }) {
   return {
-    type: EDIT_VM_NIC,
+    type: C.EDIT_VM_NIC,
     payload: {
       vmId,
       nic,
@@ -426,9 +353,22 @@ export function editVmNic ({ vmId, nic }) {
   }
 }
 
+//
+// VM Snapshots
+//
+export function setVmSnapshots ({ vmId, snapshots }) {
+  return {
+    type: C.SET_VM_SNAPSHOTS,
+    payload: {
+      vmId,
+      snapshots,
+    },
+  }
+}
+
 export function updateVmSnapshot ({ vmId, snapshot }) {
   return {
-    type: UPDATE_VM_SNAPSHOT,
+    type: C.UPDATE_VM_SNAPSHOT,
     payload: {
       vmId,
       snapshot,
@@ -436,9 +376,12 @@ export function updateVmSnapshot ({ vmId, snapshot }) {
   }
 }
 
+//
+// VM List filter actions
+//
 export function setVmsFilters ({ filters }) {
   return {
-    type: SET_FILTERS,
+    type: C.SET_FILTERS,
     payload: {
       filters,
     },
@@ -447,7 +390,7 @@ export function setVmsFilters ({ filters }) {
 
 export function saveVmsFilters ({ filters }) {
   return {
-    type: SAVE_FILTERS,
+    type: C.SAVE_FILTERS,
     payload: {
       filters,
     },
@@ -456,7 +399,7 @@ export function saveVmsFilters ({ filters }) {
 
 export function setVmSort ({ sort }) {
   return {
-    type: SET_VM_SORT,
+    type: C.SET_VM_SORT,
     payload: {
       sort,
     },

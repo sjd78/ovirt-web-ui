@@ -1,6 +1,7 @@
 // @flow
-import { FAILED_EXTERNAL_ACTION, LOGIN_FAILED } from '_/constants'
 import type { FailedExternalActionInputType, FailedExternalActionType } from './types'
+
+import * as C from '_/constants'
 
 function customizeErrorMessage (message: string): string {
   const result = message.replace('Vm ', 'VM ')
@@ -21,7 +22,7 @@ export function failedExternalAction ({ message, messageDescriptor, exception, f
     const type = exception.status ? exception.status : 'ERROR'
 
     return {
-      type: FAILED_EXTERNAL_ACTION,
+      type: C.FAILED_EXTERNAL_ACTION,
       payload: {
         message,
         messageDescriptor,
@@ -32,7 +33,7 @@ export function failedExternalAction ({ message, messageDescriptor, exception, f
   }
 
   return {
-    type: FAILED_EXTERNAL_ACTION,
+    type: C.FAILED_EXTERNAL_ACTION,
     payload: {
       messageDescriptor,
       message,
@@ -41,12 +42,10 @@ export function failedExternalAction ({ message, messageDescriptor, exception, f
   }
 }
 
-export function loginFailed ({ errorCode, message }: Object): Object {
-  return {
-    type: LOGIN_FAILED,
-    payload: {
-      errorCode,
-      message,
-    },
-  }
+export function checkTokenExpired (): Object {
+  return { type: C.CHECK_TOKEN_EXPIRED }
+}
+
+export function showTokenExpiredMessage (): Object {
+  return { type: C.SHOW_TOKEN_EXPIRED_MSG }
 }

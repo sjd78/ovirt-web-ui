@@ -1,6 +1,6 @@
 /*
- * This store subtree keeps track of async actions that were requsted on engine but haven't be confirmed
- * successful/failed yet.
+ * This store subtree keeps track of async actions that were requested on engine but
+ * haven't be confirmed successful/failed yet.
  *
  * Each task is of type { type: string, started: Date }. Other properties depends on the type.
  *
@@ -64,6 +64,7 @@ export default actionReducer(initialState, {
       task => task.type === PendingTaskTypes.SNAPSHOT_REMOVAL && task.snapshotId === payload.snapshotId)
     return pendingTasks.delete(index)
   },
+
   [ADD_SNAPSHOT_RESTORE_PENDING_TASK] (pendingTasks, { payload }) {
     const existingTask = pendingTasks.find(task =>
       task.type === PendingTaskTypes.SNAPSHOT_RESTORE)
@@ -77,6 +78,7 @@ export default actionReducer(initialState, {
       task => task.type === PendingTaskTypes.SNAPSHOT_RESTORE)
     return pendingTasks.delete(index)
   },
+
   [ADD_SNAPSHOT_ADD_PENDING_TASK] (pendingTasks, { payload }) {
     const existingTask = pendingTasks.find(task =>
       task.type === PendingTaskTypes.SNAPSHOT_ADD)

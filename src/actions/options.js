@@ -1,5 +1,4 @@
 // @flow
-
 import type { RemoteUserOptionsType, SshKeyType } from '_/ovirtapi/types'
 import type { LoadUserOptionsActionType, SaveGlobalOptionsActionType } from '_/actions/types'
 

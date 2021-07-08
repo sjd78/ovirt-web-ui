@@ -1,16 +1,12 @@
 // @flow
 /* eslint-disable flowtype/require-return-type */
-
 import type { DiskType } from '../ovirtapi/types'
-import {
-  CREATE_DISK_FOR_VM,
-  REMOVE_DISK,
-  EDIT_VM_DISK,
-} from '../constants'
+
+import * as C from '_/constants'
 
 export function createDiskForVm ({ vmId, disk }: { vmId: string, disk: DiskType }) {
   return {
-    type: CREATE_DISK_FOR_VM,
+    type: C.CREATE_DISK_FOR_VM,
     payload: {
       vmId,
       disk,
@@ -20,7 +16,7 @@ export function createDiskForVm ({ vmId, disk }: { vmId: string, disk: DiskType 
 
 export function removeDisk ({ diskId, vmToRefreshId }: { diskId: string, vmToRefreshId?: string }) {
   return {
-    type: REMOVE_DISK,
+    type: C.REMOVE_DISK,
     payload: {
       diskId,
       vmToRefreshId,
@@ -30,7 +26,7 @@ export function removeDisk ({ diskId, vmToRefreshId }: { diskId: string, vmToRef
 
 export function editDiskOnVm ({ vmId, disk }: { vmId: string, disk: DiskType }) {
   return {
-    type: EDIT_VM_DISK,
+    type: C.EDIT_VM_DISK,
     payload: {
       vmId,
       disk,

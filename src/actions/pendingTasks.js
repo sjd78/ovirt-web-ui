@@ -1,22 +1,12 @@
 // @flow
 /* eslint-disable flowtype/require-return-type */
 
-import {
-  ADD_DISK_REMOVAL_PENDING_TASK,
-  ADD_SNAPSHOT_ADD_PENDING_TASK,
-  ADD_SNAPSHOT_REMOVAL_PENDING_TASK,
-  ADD_SNAPSHOT_RESTORE_PENDING_TASK,
-  REMOVE_DISK_REMOVAL_PENDING_TASK,
-  REMOVE_SNAPSHOT_ADD_PENDING_TASK,
-  REMOVE_SNAPSHOT_REMOVAL_PENDING_TASK,
-  REMOVE_SNAPSHOT_RESTORE_PENDING_TASK,
-} from '_/constants'
-
+import * as C from '_/constants'
 import { PendingTaskTypes } from '_/reducers/pendingTasks'
 
 export function addDiskRemovalPendingTask (diskId: string) {
   return {
-    type: ADD_DISK_REMOVAL_PENDING_TASK,
+    type: C.ADD_DISK_REMOVAL_PENDING_TASK,
     payload: {
       diskId,
     },
@@ -25,7 +15,7 @@ export function addDiskRemovalPendingTask (diskId: string) {
 
 export function removeDiskRemovalPendingTask (diskId: string) {
   return {
-    type: REMOVE_DISK_REMOVAL_PENDING_TASK,
+    type: C.REMOVE_DISK_REMOVAL_PENDING_TASK,
     payload: {
       diskId,
     },
@@ -34,7 +24,7 @@ export function removeDiskRemovalPendingTask (diskId: string) {
 
 export function addSnapshotRemovalPendingTask (snapshotId: string) {
   return {
-    type: ADD_SNAPSHOT_REMOVAL_PENDING_TASK,
+    type: C.ADD_SNAPSHOT_REMOVAL_PENDING_TASK,
     payload: {
       type: PendingTaskTypes.SNAPSHOT_REMOVAL,
       started: new Date(),
@@ -45,14 +35,14 @@ export function addSnapshotRemovalPendingTask (snapshotId: string) {
 
 export function removeSnapshotRemovalPendingTask (snapshotId: string) {
   return {
-    type: REMOVE_SNAPSHOT_REMOVAL_PENDING_TASK,
+    type: C.REMOVE_SNAPSHOT_REMOVAL_PENDING_TASK,
     payload: { snapshotId },
   }
 }
 
 export function addSnapshotRestorePendingTask () {
   return {
-    type: ADD_SNAPSHOT_RESTORE_PENDING_TASK,
+    type: C.ADD_SNAPSHOT_RESTORE_PENDING_TASK,
     payload: {
       type: PendingTaskTypes.SNAPSHOT_RESTORE,
       started: new Date(),
@@ -61,12 +51,12 @@ export function addSnapshotRestorePendingTask () {
 }
 
 export function removeSnapshotRestorePendingTask () {
-  return { type: REMOVE_SNAPSHOT_RESTORE_PENDING_TASK }
+  return { type: C.REMOVE_SNAPSHOT_RESTORE_PENDING_TASK }
 }
 
 export function addSnapshotAddPendingTask () {
   return {
-    type: ADD_SNAPSHOT_ADD_PENDING_TASK,
+    type: C.ADD_SNAPSHOT_ADD_PENDING_TASK,
     payload: {
       type: PendingTaskTypes.SNAPSHOT_ADD,
       started: new Date(),
@@ -75,5 +65,5 @@ export function addSnapshotAddPendingTask () {
 }
 
 export function removeSnapshotAddPendingTask () {
-  return { type: REMOVE_SNAPSHOT_ADD_PENDING_TASK }
+  return { type: C.REMOVE_SNAPSHOT_ADD_PENDING_TASK }
 }

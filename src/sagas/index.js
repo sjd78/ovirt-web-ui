@@ -39,7 +39,6 @@ import {
 
   setVmNics,
   removeActiveRequest,
-  getVmCdRom,
   setVmsFilters,
 } from '_/actions'
 
@@ -285,8 +284,8 @@ export function* fetchSinglePool (action) {
  * info comes from "current=true" while a non-running VM's cdrom info comes from the
  * next_run/"current=false" API parameter.
  */
-function* fetchVmCdRom ({ vmId, current }) {
-  const cdrom = yield callExternalAction('getCdRom', Api.getCdRom, getVmCdRom({ vmId, current }))
+function* fetchVmCdRom ({ vmId, current = true }) {
+  const cdrom = yield callExternalAction('getCdRom', Api.getCdRom, { payload: { vmId, current } })
 
   let cdromInternal = null
   if (cdrom) {
@@ -537,14 +536,9 @@ export function* rootSaga () {
     throttle(100, GET_BY_PAGE, fetchByPage),
     throttle(100, GET_VMS, fetchVms),
     throttle(100, GET_POOLS, fetchPools),
-
-    takeLatest(GET_ALL_EVENTS, fetchAllEvents),
-    takeEvery(DISMISS_EVENT, dismissEvent),
-    takeEvery(CLEAR_USER_MSGS, clearEvents),
-
-    takeLatest(NAVIGATE_TO_VM_DETAILS, navigateToVmDetails),
-    takeEvery(SELECT_VM_DETAIL, selectVmDetail),
+    takeEvery(SELECT_VM_DETAIL, selectVmDetail), // TODO: s/SELECT_VM_DETAIL/GET_VM_DETAILS/
     takeEvery(SELECT_POOL_DETAIL, selectPoolDetail),
+    takeEvery(NAVIGATE_TO_VM_DETAILS, navigateToVmDetails),
 
     takeEvery(ADD_VM_NIC, addVmNic),
     takeEvery(DELETE_VM_NIC, deleteVmNic),
@@ -555,6 +549,10 @@ export function* rootSaga () {
     takeEvery(OPEN_CONSOLE_MODAL, openConsoleModal),
     takeEvery(DOWNLOAD_CONSOLE_VM, downloadVmConsole),
     takeEvery(GET_RDP_VM, getRDPVm),
+
+    takeLatest(GET_ALL_EVENTS, fetchAllEvents),
+    takeEvery(DISMISS_EVENT, dismissEvent),
+    takeEvery(CLEAR_USER_MSGS, clearEvents),
 
     takeEvery(SAVE_FILTERS, saveFilters),
 

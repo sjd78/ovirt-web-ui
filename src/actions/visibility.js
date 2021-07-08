@@ -1,11 +1,8 @@
-import {
-  SELECT_POOL_DETAIL,
-  SELECT_VM_DETAIL,
-} from '_/constants'
+import * as C from '_/constants'
 
 export function selectVmDetail ({ vmId }) {
   return {
-    type: SELECT_VM_DETAIL,
+    type: C.SELECT_VM_DETAIL,
     payload: {
       vmId,
     },
@@ -14,7 +11,7 @@ export function selectVmDetail ({ vmId }) {
 
 export function selectPoolDetail ({ poolId }) {
   return {
-    type: SELECT_POOL_DETAIL,
+    type: C.SELECT_POOL_DETAIL,
     payload: {
       poolId,
     },

@@ -1,12 +1,9 @@
 // @flow
-
-import {
-  SET_DATA_CENTERS,
-} from '_/constants'
+import * as C from '_/constants'
 
 export function setDataCenters (dataCenters: Array<Object>): Object {
   return {
-    type: SET_DATA_CENTERS,
+    type: C.SET_DATA_CENTERS,
     payload: dataCenters,
   }
 }
