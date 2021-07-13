@@ -1,15 +1,23 @@
-import { put, select, takeEvery, takeLatest, all, call } from 'redux-saga/effects'
-import { push } from 'connected-react-router'
+import { put, select, takeLatest, all, call } from 'redux-saga/effects'
 import merge from 'lodash/merge'
 
 import Api from '_/ovirtapi'
 import * as A from '_/actions'
 import * as C from '_/constants'
-import { arrayMatch } from '_/utils'
 
 import { callExternalAction, delay, delayInMsSteps } from './utils'
-import { startProgress, stopProgress, addVmNic, fetchSingleVm } from './index'
+import { addVmNic, fetchSingleVm } from './index'
 import { createDiskForVm } from './disks'
+import { changeVmCdRom } from './vm-edit'
+
+//
+//
+export default [
+  takeLatest(C.COMPOSE_CREATE_VM, composeAndCreateVm),
+  takeLatest(C.CREATE_VM, createVm),
+]
+//
+//
 
 function* createMemoryPolicyFromCluster (clusterId, memorySize) {
   const cluster = yield select(state => state.clusters.get(clusterId))
@@ -294,144 +302,3 @@ function* waitForVmToBeUnlocked (vmId, isCloning = false) {
     yield fetchSingleVm(A.getSingleVm({ vmId }))
   }
 }
-
-/*
- * Edit a VM by pushing (with a full or partial VM definition) VM updates, and if
- * new cdrom info is provided, change the cdrom as appropriate for the VM's status. A
- * running VM will have its current=true cdrom updated (to make the change immediate).
- * A non-running VM will have its current=false cdrom updated (to make the change apply
- * at next_run).
- */
-function* editVm (action) {
-  const { payload: { vm } } = action
-  const vmId = vm.id
-  const onlyNeedChangeCd = vm && arrayMatch(Object.keys(vm), ['id', 'cdrom'])
-
-  const editVmResult = onlyNeedChangeCd
-    ? {}
-    : yield callExternalAction('editVm', Api.editVm, action)
-
-  let commitError = editVmResult.error
-  if (!commitError && vm.cdrom) {
-    const changeCdResult = yield changeVmCdRom(A.changeVmCdRom({
-      vmId,
-      cdrom: vm.cdrom,
-      current: action.payload.changeCurrentCd,
-      updateVm: false, // A.selectVmDetail will update the VMs info with all of the edits
-    }))
-
-    commitError = changeCdResult.error
-  }
-
-  if (!commitError) {
-    // deep fetch refresh the VM with any/all updates applied
-    yield put(A.selectVmDetail({ vmId }))
-  }
-
-  if (action.meta && action.meta.correlationId) {
-    yield put(A.setVmActionResult({
-      vmId,
-      correlationId: action.meta.correlationId,
-      result: !commitError,
-    }))
-  }
-
-  if (!commitError && action.payload.restartAfterEdit) {
-    yield put(A.restartVm({ vmId })) // non-blocking restart
-  }
-}
-
-function* changeVmCdRom (action) {
-  const result = yield callExternalAction('changeCdRom', Api.changeCdRom, action)
-
-  if (action.meta && action.meta.correlationId) {
-    yield put(A.setVmActionResult({
-      vmId: action.payload.vmId,
-      correlationId: action.meta.correlationId,
-      result: !result.error,
-    }))
-  }
-
-  return result
-}
-
-function* shutdownVm (action) {
-  yield startProgress({ vmId: action.payload.vmId, name: 'shutdown' })
-  const result = yield callExternalAction('shutdown', Api.shutdown, action)
-  const vmName = yield select(state => state.vms.getIn(['vms', action.payload.vmId, 'name']))
-  if (result.status === 'complete') {
-    yield put(A.addUserMessage({ messageDescriptor: { id: 'actionFeedbackShutdownVm', params: { VmName: vmName } }, type: 'success' }))
-  }
-  yield stopProgress({ vmId: action.payload.vmId, name: 'shutdown', result })
-}
-
-function* restartVm (action) {
-  yield startProgress({ vmId: action.payload.vmId, name: 'restart' })
-  const result = yield callExternalAction('restart', Api.restart, action)
-  const vmName = yield select(state => state.vms.getIn(['vms', action.payload.vmId, 'name']))
-  if (result.status === 'complete') {
-    yield put(A.addUserMessage({ messageDescriptor: { id: 'actionFeedbackRestartVm', params: { VmName: vmName } }, type: 'success' }))
-  }
-  yield stopProgress({ vmId: action.payload.vmId, name: 'restart', result })
-}
-
-function* suspendVm (action) {
-  yield startProgress({ vmId: action.payload.vmId, name: 'suspend' })
-  const result = yield callExternalAction('suspend', Api.suspend, action)
-  const vmName = yield select(state => state.vms.getIn(['vms', action.payload.vmId, 'name']))
-  if (result.status === 'pending') {
-    yield put(A.addUserMessage({ messageDescriptor: { id: 'actionFeedbackSuspendVm', params: { VmName: vmName } }, type: 'success' }))
-  }
-  yield stopProgress({ vmId: action.payload.vmId, name: 'suspend', result })
-}
-
-function* startVm (action) {
-  yield startProgress({ vmId: action.payload.vmId, name: 'start' })
-  const result = yield callExternalAction('start', Api.start, action)
-  const vmName = yield select(state => state.vms.getIn(['vms', action.payload.vmId, 'name']))
-  // TODO: check status at refresh --> conditional refresh wait_for_launch
-  if (result.status === 'complete') {
-    yield put(A.addUserMessage({ messageDescriptor: { id: 'actionFeedbackStartVm', params: { VmName: vmName } }, type: 'success' }))
-  }
-  yield stopProgress({ vmId: action.payload.vmId, name: 'start', result })
-}
-
-function* startPool (action) {
-  yield startProgress({ poolId: action.payload.poolId, name: 'start' })
-  const result = yield callExternalAction('startPool', Api.startPool, action)
-  const poolName = yield select(state => state.vms.getIn(['pools', action.payload.poolId, 'name']))
-  if (result.status === 'complete') {
-    yield put(A.addUserMessage({ messageDescriptor: { id: 'actionFeedbackAllocateVm', params: { poolname: poolName } }, type: 'success' }))
-  }
-  yield stopProgress({ poolId: action.payload.poolId, name: 'start', result })
-}
-
-function* removeVm (action) {
-  yield startProgress({ vmId: action.payload.vmId, name: 'remove' })
-  const result = yield callExternalAction('remove', Api.remove, action)
-
-  if (result.status === 'complete') {
-    // TODO: Remove the VM from the store so we don't see it on the list page!
-    yield put(push('/'))
-  }
-
-  yield stopProgress({ vmId: action.payload.vmId, name: 'remove', result })
-}
-
-export default [
-  // Create and make changes to a VM
-  takeLatest(C.COMPOSE_CREATE_VM, composeAndCreateVm),
-  takeLatest(C.CREATE_VM, createVm),
-  takeLatest(C.CHANGE_VM_CDROM, changeVmCdRom),
-  takeLatest(C.EDIT_VM, editVm),
-  takeLatest(C.REMOVE_VM, removeVm),
-
-  // VM Status Changes
-  takeEvery(C.SHUTDOWN_VM, shutdownVm),
-  takeEvery(C.RESTART_VM, restartVm),
-  takeEvery(C.START_VM, startVm),
-  takeEvery(C.SUSPEND_VM, suspendVm),
-
-  // Pool Status Changes
-  takeEvery(C.START_POOL, startPool),
-]

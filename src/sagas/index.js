@@ -16,14 +16,16 @@ import sagasOptions from './options'
 import sagasRefresh from './background-refresh'
 import sagasDisks from './disks'
 import sagasLogin from './login'
-import sagasVmChanges from './vmChanges'
+
+import sagasVmActions from './vm-actions'
+import sagasVmChanges from './vm-create'
+import sagasVmEdits from './vm-edit'
 import sagasVmSnapshots from '_/components/VmDetails/cards/SnapshotsCard/sagas'
 
 import {
   updatePagingData,
   updateVms,
   removeVms,
-  vmActionInProgress,
 
   getSingleVm,
   setVmSnapshots,
@@ -35,7 +37,6 @@ import {
   removePools,
   updatePools,
   updateVmsPoolsCount,
-  poolActionInProgress,
 
   setVmNics,
   removeActiveRequest,
@@ -317,38 +318,6 @@ function* editVmNic (action) {
   yield put(setVmNics({ vmId: action.payload.vmId, nics: nicsInternal }))
 }
 
-function* getSingleInstance ({ vmId, poolId }) {
-  const fetches = [fetchSingleVm(getSingleVm({ vmId }))]
-  if (poolId) {
-    fetches.push(fetchSinglePool(getSinglePool({ poolId })))
-  }
-  yield all(fetches)
-}
-
-export function* startProgress ({ vmId, poolId, name }) {
-  if (vmId) {
-    yield put(vmActionInProgress({ vmId, name, started: true }))
-  } else {
-    yield put(poolActionInProgress({ poolId, name, started: true }))
-  }
-}
-
-export function* stopProgress ({ vmId, poolId, name, result }) {
-  if (result && result.status === 'complete') {
-    vmId = vmId || result.vm.id
-    // do not call 'end of in progress' if successful,
-    // since UI will be updated by refresh
-    yield delay(5 * 1000)
-    yield getSingleInstance({ vmId, poolId })
-
-    yield delay(30 * 1000)
-    yield getSingleInstance({ vmId, poolId })
-  }
-
-  const actionInProgress = vmId ? vmActionInProgress : poolActionInProgress
-  yield put(actionInProgress(Object.assign(vmId ? { vmId } : { poolId }, { name, started: false })))
-}
-
 function* fetchAllEvents (action) {
   const user = yield select(state => ({
     id: state.config.getIn(['user', 'id']),
@@ -536,7 +505,7 @@ export function* rootSaga () {
     throttle(100, GET_BY_PAGE, fetchByPage),
     throttle(100, GET_VMS, fetchVms),
     throttle(100, GET_POOLS, fetchPools),
-    takeEvery(SELECT_VM_DETAIL, selectVmDetail), // TODO: s/SELECT_VM_DETAIL/GET_VM_DETAILS/
+    takeEvery(SELECT_VM_DETAIL, selectVmDetail),
     takeEvery(SELECT_POOL_DETAIL, selectPoolDetail),
     takeEvery(NAVIGATE_TO_VM_DETAILS, navigateToVmDetails),
 
@@ -559,7 +528,9 @@ export function* rootSaga () {
     // Sagas from Components
     ...sagasDisks,
     ...sagasOptions,
+    ...sagasVmActions,
     ...sagasVmChanges,
+    ...sagasVmEdits,
     ...sagasVmSnapshots,
   ])
 }
