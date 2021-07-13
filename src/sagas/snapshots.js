@@ -1,22 +1,25 @@
 import { takeEvery, put } from 'redux-saga/effects'
 
 import Api, { Transforms } from '_/ovirtapi'
-import { callExternalAction, delay, delayInMsSteps } from '_/sagas/utils'
-import { fetchVmSnapshots, startProgress, stopProgress } from '_/sagas'
-import {
-  addSnapshotRemovalPendingTask,
-  removeSnapshotRemovalPendingTask,
-  addSnapshotRestorePendingTask,
-  removeSnapshotRestorePendingTask,
-  addSnapshotAddPendingTask,
-  removeSnapshotAddPendingTask,
-  updateVmSnapshot,
-} from '_/actions'
+import * as A from '_/actions'
+import * as C from '_/constants'
 
-import { ADD_VM_SNAPSHOT, DELETE_VM_SNAPSHOT, RESTORE_VM_SNAPSHOT } from './constants'
+import { callExternalAction, delay, delayInMsSteps } from './utils'
+import { fetchVmSnapshots } from './index'
+import { startProgress, stopProgress } from './vm-actions'
+
+//
+//
+export default [
+  takeEvery(C.ADD_VM_SNAPSHOT, addVmSnapshot),
+  takeEvery(C.DELETE_VM_SNAPSHOT, deleteVmSnapshot),
+  takeEvery(C.RESTORE_VM_SNAPSHOT, restoreVmSnapshot),
+]
+//
+//
 
 function* addVmSnapshot (action) {
-  yield put(addSnapshotAddPendingTask())
+  yield put(A.addSnapshotAddPendingTask())
   const snapshot = yield callExternalAction('addNewSnapshot', Api.addNewSnapshot, action)
 
   if (snapshot && snapshot.id) {
@@ -30,7 +33,7 @@ function* addVmSnapshot (action) {
     }
     yield fetchVmSnapshots({ vmId: action.payload.vmId })
   }
-  yield put(removeSnapshotAddPendingTask())
+  yield put(A.removeSnapshotAddPendingTask())
 }
 
 function* deleteVmSnapshot (action) {
@@ -40,7 +43,7 @@ function* deleteVmSnapshot (action) {
   if (result.error) {
     return
   }
-  yield put(addSnapshotRemovalPendingTask(snapshotId))
+  yield put(A.addSnapshotRemovalPendingTask(snapshotId))
   let snapshotRemoved = false
   yield fetchVmSnapshots({ vmId })
   for (const delaySec of delayInMsSteps()) {
@@ -50,26 +53,20 @@ function* deleteVmSnapshot (action) {
       break
     } else {
       const snapshotInternal = Transforms.Snapshot.toInternal({ snapshot })
-      yield put(updateVmSnapshot({ vmId, snapshot: snapshotInternal }))
+      yield put(A.updateVmSnapshot({ vmId, snapshot: snapshotInternal }))
     }
     yield delay(delaySec * 1000)
   }
   if (snapshotRemoved) {
     yield fetchVmSnapshots({ vmId })
   }
-  yield put(removeSnapshotRemovalPendingTask(snapshotId))
+  yield put(A.removeSnapshotRemovalPendingTask(snapshotId))
 }
 
 function* restoreVmSnapshot (action) {
-  yield put(addSnapshotRestorePendingTask())
+  yield put(A.addSnapshotRestorePendingTask())
   yield startProgress({ vmId: action.payload.vmId, name: 'restoreSnapshot' })
   const result = yield callExternalAction('restoreSnapshot', Api.restoreSnapshot, action)
   yield stopProgress({ vmId: action.payload.vmId, name: 'restoreSnapshot', result })
-  yield put(removeSnapshotRestorePendingTask())
+  yield put(A.removeSnapshotRestorePendingTask())
 }
-
-export default [
-  takeEvery(ADD_VM_SNAPSHOT, addVmSnapshot),
-  takeEvery(DELETE_VM_SNAPSHOT, deleteVmSnapshot),
-  takeEvery(RESTORE_VM_SNAPSHOT, restoreVmSnapshot),
-]

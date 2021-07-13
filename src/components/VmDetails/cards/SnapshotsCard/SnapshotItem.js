@@ -1,8 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-
 import { connect } from 'react-redux'
-
 import {
   Icon,
   OverlayTrigger,
@@ -13,13 +11,15 @@ import {
 import style from './style.css'
 
 import { withMsg } from '_/intl'
-import RestoreConfirmationModal from './RestoreConfirmationModal'
-import DeleteConfirmationModal from '../../../VmModals/DeleteConfirmationModal'
-import SnapshotDetail from './SnapshotDetail'
-import { deleteVmSnapshot } from './actions'
+import { deleteVmSnapshot } from '_/actions'
 import { formatHowLongAgo } from '_/utils/format'
-import { getMinimizedString, escapeHtml } from '../../../utils'
+import { getMinimizedString, escapeHtml } from '_/components/utils'
 import { Tooltip, InfoTooltip } from '_/components/tooltips'
+
+import DeleteConfirmationModal from '_/components/VmModals/DeleteConfirmationModal'
+import RestoreConfirmationModal from './RestoreConfirmationModal'
+import SnapshotDetail from './SnapshotDetail'
+
 const MAX_DESCRIPTION_SIZE = 50
 
 const SnapshotAction = ({ children, className, disabled, id, onClick }) => {

@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Immutable from 'immutable'
 
 import {
   Popover,
@@ -8,12 +9,10 @@ import {
   OverlayTrigger,
   Tooltip,
 } from 'patternfly-react'
-import Immutable from 'immutable'
 
 import style from './style.css'
 
 import { withMsg } from '_/intl'
-
 import Selectors from '_/selectors'
 import { templateNameRenderer, getFormatedDateTime, userFormatOfBytes, localeCompare } from '_/helpers'
 import { getOsHumanName, sortDisksForDisplay } from '_/components/utils'

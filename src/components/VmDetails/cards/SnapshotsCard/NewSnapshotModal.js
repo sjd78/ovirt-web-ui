@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import { connect } from 'react-redux'
-import { addVmSnapshot } from './actions'
+import { addVmSnapshot } from '_/actions'
 
 import {
   Alert,

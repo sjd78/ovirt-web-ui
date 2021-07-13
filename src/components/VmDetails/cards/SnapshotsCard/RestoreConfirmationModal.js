@@ -6,7 +6,7 @@ import Immutable from 'immutable'
 import { Icon, MessageDialog } from 'patternfly-react'
 import { withMsg } from '_/intl'
 import { getMinimizedString, escapeHtml } from '_/components/utils'
-import { restoreVmSnapshot } from './actions'
+import { restoreVmSnapshot } from '_/actions'
 
 const MAX_DESCRIPTION_SIZE = 150
 

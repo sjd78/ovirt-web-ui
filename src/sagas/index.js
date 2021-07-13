@@ -12,15 +12,14 @@ import { push } from 'connected-react-router'
 import Api, { Transforms } from '_/ovirtapi'
 import { saveToLocalStorage } from '_/storage'
 
-import sagasOptions from './options'
-import sagasRefresh from './background-refresh'
 import sagasDisks from './disks'
 import sagasLogin from './login'
-
+import sagasOptions from './options'
+import sagasRefresh from './background-refresh'
+import sagasSnapshots from './snapshots'
 import sagasVmActions from './vm-actions'
 import sagasVmChanges from './vm-create'
 import sagasVmEdits from './vm-edit'
-import sagasVmSnapshots from '_/components/VmDetails/cards/SnapshotsCard/sagas'
 
 import {
   updatePagingData,
@@ -531,6 +530,6 @@ export function* rootSaga () {
     ...sagasVmActions,
     ...sagasVmChanges,
     ...sagasVmEdits,
-    ...sagasVmSnapshots,
+    ...sagasSnapshots,
   ])
 }
