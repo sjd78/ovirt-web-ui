@@ -22,7 +22,7 @@ import {
   setVnicProfiles,
 } from '_/actions'
 
-import { EVERYONE_GROUP_ID } from './index'
+import { EVERYONE_GROUP_ID } from '_/constants'
 import { fetchUnknownIcons } from './osIcons'
 
 export function* fetchAllClusters () {
