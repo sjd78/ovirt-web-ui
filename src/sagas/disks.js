@@ -36,7 +36,7 @@ function* transformAndPermitDiskAttachment (attachment) {
 }
 
 function* fetchVmDisks ({ vmId }) {
-  const diskattachments = yield callExternalAction('diskattachments', Api.diskattachments, { payload: { vmId } })
+  const diskattachments = yield callExternalAction(Api.diskattachments, { payload: { vmId } })
 
   const internalDisks = []
 
@@ -59,7 +59,7 @@ export function* createDiskForVm (action) {
     originalBootableDisk = yield clearBootableFlagOnVm(vmId)
   }
 
-  const result = yield callExternalAction('addDiskAttachment', Api.addDiskAttachment, action)
+  const result = yield callExternalAction(Api.addDiskAttachment, action)
   if (result.error) {
     if (originalBootableDisk) {
       yield updateDiskAttachmentBootable(vmId, originalBootableDisk, true)
@@ -78,7 +78,7 @@ function* removeDisk (action) {
   const diskId = action.payload.diskId
   const vmToRefreshId = action.payload.vmToRefreshId
 
-  const result = yield callExternalAction('removeDisk', Api.removeDisk, { payload: diskId })
+  const result = yield callExternalAction(Api.removeDisk, { payload: diskId })
   if (result.error) {
     return
   }
@@ -106,7 +106,7 @@ function* editDiskOnVm (action) {
   yield clearBootableFlagOnVm(vmId, disk)
 
   action.payload.disk = editableFieldsDisk
-  const result = yield callExternalAction('updateDiskAttachment', Api.updateDiskAttachment, action)
+  const result = yield callExternalAction(Api.updateDiskAttachment, action)
   if (result.error) {
     return
   }
@@ -130,7 +130,7 @@ function* clearBootableFlagOnVm (vmId, currentDisk) {
  * changed (async only operation + poll until desired result = simulated sync operation)
  */
 function* updateDiskAttachmentBootable (vmId, diskAttachmentId, isBootable) {
-  const result = yield callExternalAction('updateDiskAttachment', Api.updateDiskAttachment, {
+  const result = yield callExternalAction(Api.updateDiskAttachment, {
     payload: {
       disk: { attachmentId: diskAttachmentId, bootable: isBootable },
       vmId,
@@ -177,7 +177,6 @@ function* waitForDiskAttachment (vmId, attachmentId, test, canBeMissing = false)
 
   for (const delayMs of delayInMsSteps()) {
     const apiDiskAttachment = yield callExternalAction(
-      'diskattachment',
       Api.diskattachment,
       { payload: { vmId, attachmentId } },
       canBeMissing
